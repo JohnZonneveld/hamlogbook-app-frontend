@@ -171,25 +171,25 @@ function profilePage(){
   })
   containerBox.innerHTML = `
   <div class="display-card" id="display-card">
-  </div>
-  <div class="profile-card" id="profile-card">
-    <br>
-    <h1> Your Profile </h1>
-    <div class="card-body">
-      <h5 class="card-title">Callsign: ${state.user.callsign}</h5>
-    </div>
-    <ul class="list-group list-group-flush">
+    <div class="profile-card" id="profile-card">
+      <br>
+      <h1> Your Profile </h1>
+      <div class="card-body">
+        <h5 class="card-title">Callsign: ${state.user.callsign}</h5>
+      </div>
+      <ul class="list-group list-group-flush">
       <li class="list-group-item rounded">Name: ${state.user.name}</li>
       <li class="list-group-item rounded">Email: ${state.user.email}</li>
       <li class="list-group-item rounded">Grid Square: ${state.user.my_qth}</li>
-    </ul>
-    <div class="card-body">
-      <a href="#" class="card-link" id="edit-link">Edit Profile</a>
+      </ul>
+      <div class="card-body">
+        <a href="#" class="card-link" id="edit-link">Edit Profile</a>
+      </div>
     </div>
-  </div>
-  <br>
-  <div class="form-group text-left">
-  <input id="logout" type="submit" name="logout" class="btn btn-info btn-md" value="Log Out">
+    <br>
+    <div class="form-group text-left">
+      <input id="logout" type="submit" name="logout" class="btn btn-info btn-md" value="Log Out">
+    </div>
   </div>
 `
 }
@@ -206,7 +206,7 @@ function menuBar(){
 function editpage(){
   menu = document.getElementById("menu-bar")
   displayCard = document.getElementById('display-card')
-  displayCard.innerHTML=`
+  displayCard.innerHTML = `
   <br>
   <h3 class="text-center text-info">Edit</h3>
   <br>
@@ -232,12 +232,7 @@ function editpage(){
     </div>
   </form>
   `
-  // searchButton2 = searchButton
-  // searchButton2.addEventListener("click", function(e){
-  //   e.preventDefault
-  //   state.page = 'search'
-  //   render()
-  // })
+
 }
 
 // edit form handler
