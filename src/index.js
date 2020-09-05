@@ -30,7 +30,7 @@ let loginForm = `
   </div>
   `
 
-//creates page content based on uder interaction
+//creates page content based on user interaction
 function renderPage(){
     switch (state.page){
       // first page people see to log in
@@ -51,9 +51,9 @@ function renderPage(){
       case 'profile':
         // calls profile page function to set profile html
         // does this so we can get the user object
-        menuBar()
+        // menuBar()
         profilePage()
-        editButton = document.getElementById("edit-link")
+        editButton = document.getElementById("edit-profile")
         editButton.addEventListener("click", function(e){
           e.preventDefault()
           state.page = 'edit'
@@ -68,16 +68,27 @@ function renderPage(){
           state.user = null
           renderPage()
         })
+
+        // contacts button and event listener for the button
+        contactsButton = document.getElementById('contacts')
+        contactsButton.addEventListener("click", function (){
+          sessionStorage.clear()
+          state.page = "contacts" 
+          state.user = null
+          renderPage()
+        })
       break;
       // search page
       case 'search':
         fetchRandomUser()
       break;
       case 'edit':
-        editpage()
+        editPage()
         const saveButton = document.getElementById("saveEdit")
         saveButton.addEventListener("click", (e) => editFormHandler(e))
       break;
+      case 'contacts':
+        contactsPage()
     }
   }
 
@@ -120,8 +131,6 @@ function loginFetch(callsign, password){
     }
   })
 }
-
-
 
   // initial call to render page
 renderPage()
@@ -170,10 +179,18 @@ function profilePage(){
     state.user = json
   })
   containerBox.innerHTML = `
+  <div class="display-menu" id="display-menu">
+    <div class="form-group text-left">
+      <br>
+      <input id="logout" type="submit" name="logout" class="btn btn-info btn-md" value="Log Out">
+      <input id="edit-profile" type="submit" class="btn btn-info btn-md" value="Edit Profile">
+      <input id="contacts" type="submit" class="btn btn-info btn-md" value="contacts">
+    </div>
+  </div>
   <div class="display-card" id="display-card">
     <div class="profile-card" id="profile-card">
       <br>
-      <h1> Your Profile </h1>
+      <h2> Your Profile </h2>
       <div class="card-body">
         <h5 class="card-title">Callsign: ${state.user.callsign}</h5>
       </div>
@@ -182,29 +199,17 @@ function profilePage(){
       <li class="list-group-item rounded">Email: ${state.user.email}</li>
       <li class="list-group-item rounded">Grid Square: ${state.user.my_qth}</li>
       </ul>
-      <div class="card-body">
-        <a href="#" class="card-link" id="edit-link">Edit Profile</a>
-      </div>
     </div>
     <br>
-    <div class="form-group text-left">
-      <input id="logout" type="submit" name="logout" class="btn btn-info btn-md" value="Log Out">
-    </div>
+    
   </div>
 `
 }
 
-//optional top menu bar
-function menuBar(){
-  containerBox.innerHTML = `
-  <div class="display-card" id="display-card">
-  </div>
-  `
-}
-
 // edit page
-function editpage(){
-  menu = document.getElementById("menu-bar")
+function editPage(){
+  menu = document.getElementById("display-menu")
+  menu.parentNode.removeChild(menu)
   displayCard = document.getElementById('display-card')
   displayCard.innerHTML = `
   <br>
@@ -312,3 +317,83 @@ function registerFetch(callsign, password, name, email, my_qth){
       renderPage()
   })
 }
+
+// html for contacts page
+function contactsPage(){
+  const myPromise = fetch(`http://localhost:3000/contacts`)
+  .then(response => response.json())
+  myPromise.then(json => {
+  containerBox.innerHTML = `
+  <div class="display-menu" id="display-menu">
+    <div class="form-group text-left">
+      <br>
+      <input id="logout" type="submit" name="logout" class="btn btn-info btn-md" value="Log Out">
+      <input id="edit-profile" type="submit" class="btn btn-info btn-md" value="Edit Profile">
+      <input id="contacts" type="submit" class="btn btn-info btn-md" value="Contacts">
+    </div>
+  </div>
+  <div class="display-card" id="display-card">
+    <div class="contacts-card" id="contacts-card">
+      <br>
+      <h2> Your Contacts </h2>
+      
+        <table>
+        <thead>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Callsign</td>
+          <td>Worked</td>
+          <td>Date/Time</td>
+          <td>Band</td>
+          <td>Mode</td>
+          <td>Frequency</td>
+        </thead>
+        </table>
+        <div class="card-info" id="card-info">
+        </div>
+      
+    </div>
+    <br>
+  </div>
+`
+
+generateTableData(json)
+})
+}
+
+function generateTableData(json) {
+  let table = document.querySelector("table");
+  listLength = json.length
+  if (listLength === undefined) {
+    let noDataDiv = document.getElementById('card-info')
+    noDataDiv.innerText = json.error
+  } else {
+  for (let i = 0; i < listLength; i++) {
+    let row = table.insertRow()
+    let cellA = row.insertCell()
+    let columnA = document.createTextNode('Detail')
+    cellA.appendChild(columnA)
+    let cellB = row.insertCell()
+    let columnB = document.createTextNode(json[i].callsign)
+    cellB.appendChild(columnB)
+    let cellC = row.insertCell()
+    let columnC= document.createTextNode(json[i].call)
+    cellC.appendChild(columnC)
+    let cellD = row.insertCell()
+    info = json[i].date + ' / ' + json[i].time
+    let columnD = document.createTextNode(info)
+    cellD.appendChild(columnD)
+    let cellE = row.insertCell()
+    let columnE = document.createTextNode(json[i].band)
+    cellE.appendChild(columnE)
+    let cellF = row.insertCell()
+    let columnF = document.createTextNode(json[i].mode)
+    cellF.appendChild(columnF)
+    let cellG = row.insertCell()
+    let columnG = document.createTextNode(json[i].frequency)
+    cellG.appendChild(columnG)}
+  }
+    
+}
+
+
